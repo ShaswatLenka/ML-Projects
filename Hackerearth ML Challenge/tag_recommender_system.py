@@ -1,15 +1,11 @@
-import numpy as np # linear algebra
+#import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import matplotlib.pyplot as plt
 import re
-import string
-import os
 import nltk #NLP library
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer #to perform stemming
 #from bs4 import BeautifulSoup #uncomment if you like to use BeautifulSoup instead
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer #to compute the IDF
 
@@ -70,7 +66,7 @@ tfidf_transformer.fit(word_count_vector)
 feature_names=cv.get_feature_names()
  
 # get the document that we want to extract keywords from
-doc=corpus[0]
+doc=corpus[2]
  
 #generate tf-idf for the given document
 tf_idf_vector=tfidf_transformer.transform(cv.transform([doc]))
@@ -108,8 +104,8 @@ def extract_topn_from_vector(feature_names, sorted_items, topn=10):
 #sort the tf-idf vectors by descending order of scores
 sorted_items=sort_coo(tf_idf_vector.tocoo())
  
-#extract only the top n; n here is 10
-keywords=extract_topn_from_vector(feature_names,sorted_items,10)
+#extract only the top n; n here is 5
+keywords=extract_topn_from_vector(feature_names,sorted_items,5)
  
 # now print the results
 print("\n=====Doc=====")
@@ -118,7 +114,23 @@ print("\n===Keywords===")
 for k in keywords:
     print(k,keywords[k])
 
+#write our results into a csv file
+import csv
+# store first five tags in a list
+top_tags = ""
+for x in keywords.keys():
+    top_tags = top_tags + (x + "|")
+    
+#change 1 to the number of rows in the submission file
+with open('submission.csv','w',newline='') as csvFile:
+    writer = csv.writer(csvFile)
+    writer.writerow(['id','tags'])
+    for x in range(1):
+        row = [chunk['id'][x],top_tags]
+        writer.writerow(row)
+csvFile.close()
 
-
-
+        
+        
+        
     
